@@ -32,23 +32,16 @@
     }
 
     WordleDict.prototype.filterFixed = function(words, fixed) {
-        let fixedIdx = {}
+        let regex = ".".repeat(this.wordLength)
         for(let key in fixed) {
-            fixedIdx[fixed[key]] = key
+            regex[fixed[key]] = key
         }
+        regex = new RegExp(regex)
 
         let result = []
         for(let i = 0; i < words.length; i++) {
-            let match = true
-            for(let key in fixedIdx) {
-                if(words[i][key] != fixedIdx[key]) {
-                    match = false
-                    break
-                }
-            }
-
-            if(match) {
-                result.push(words[i])
+            if(regex.test(words[i])) {
+                result.push(words)
             }
         }
         return result
@@ -82,17 +75,12 @@
     }
 
     WordleDict.prototype.filterExclude = function(words, exclude) {
+        let regex = "[^" + exclude.join("") + "]"
+        regex = new RegExp(regex)
+
         let result = []
         for(let i = 0; i < words.length; i++) {
-            let match = true
-            for(let char of exclude) {
-                if(words[i].includes(char)) {
-                    match = false
-                    break
-                }
-            }
-
-            if(match) {
+            if(regex.test(words[i])) {
                 result.push(words[i])
             }
         }

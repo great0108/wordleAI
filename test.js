@@ -71,3 +71,20 @@ async function main() {
 }
 
 main()
+// let words = "abcde"
+// let loose = {"a" : [2, 3], "f" : [1]}
+// let regex = /.[^f][^a][^a]./
+// let start = Date.now()
+// let result = []
+// for(let i = 0; i < 10000000; i++) {
+//     let match = true
+//     for(let key in loose) {
+//         if(!words.includes(key)) {
+//             match = false
+//             break
+//         }
+//     }
+//     regex.test(words)
+// }
+// let end = Date.now()
+// console.log(end - start)
