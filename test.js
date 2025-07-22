@@ -1,8 +1,10 @@
 "use strict"
 const Wordle = require("./wordle")
+const WordleDict = require("./wordleDict")
 const readline = require('readline');
 
 let wordle = new Wordle(6)
+let wordleDict = new WordleDict()
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -52,6 +54,11 @@ async function main() {
                     // console.log(e)
                     console.log(e.message)
                 }
+                
+                let cond = wordleDict.historyToCond(wordle.rawHistory)
+                let candidate = wordleDict.search(cond)
+                console.log(cond)
+                console.log(candidate)
             }
             if(answer == "h") {
                 console.log(wordle.getHistory())

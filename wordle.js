@@ -8,6 +8,7 @@
         this.count = 0
         this.answerWord = null
         this.history = []
+        this.rawHistory = []
         this.emoji = {Right:"✅", Contain:"⚠️", Wrong:"❌"}
         this.setAnswer()
     }
@@ -51,6 +52,8 @@
                 result.push("Wrong")
             }
         }
+
+        this.rawHistory.push([word, result])
 
         result = this.makeReply(word, result)
         this.history.push(result)
