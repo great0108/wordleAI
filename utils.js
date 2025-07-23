@@ -17,7 +17,20 @@
         return result
     }
 
+    function read_json(path) {
+        let json = null
+        if(setting.nodeJS) {
+            const fs = require("fs")
+            json = fs.readFileSync(path, "utf-8")
+        } else {
+            json = FileStream.read(setting.module_path + "/" + path)
+        }
+        json = JSON.parse(json)
+        return json
+    }
+
     module.exports = {
-        read_words : read_words
+        read_words : read_words,
+        read_json : read_json
     }
 })()

@@ -98,15 +98,15 @@
             let [word, result] = h
             for(let i = 0; i < this.wordLength; i++) {
                 let char = word[i]
-                if(result[i] == "Right") {
+                if(result[i] == "R") {
                     fixed[i] = char
-                } else if(result[i] == "Contain") {
+                } else if(result[i] == "C") {
                     if(char in loose && !loose[char].includes(i)) {
                         loose[char].push(i)
                     } else {
                         loose[char] = [i]
                     }
-                } else if(result[i] == "Wrong") {
+                } else if(result[i] == "W") {
                     if(!exclude.includes(char)) {
                         exclude.push(char)
                     }

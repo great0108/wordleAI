@@ -10,19 +10,22 @@
         this.history = []
         this.rawHistory = []
         this.emoji = {Right:"✅", Contain:"⚠️", Wrong:"❌"}
-        this.setAnswer()
     }
 
     Wordle.prototype.reset = function() {
         this.count = 0
         this.history = []
+        this.rawHistory = []
         this.setAnswer()
     }
 
-    Wordle.prototype.setAnswer = function() {
-        let words = utils.read_words("words.txt")
-        let index = Math.random() * words.length | 0
-        this.answerWord = words[index]
+    Wordle.prototype.setAnswer = function(word) {
+        if(!word) {
+            let words = utils.read_words("words.txt")
+            let index = Math.random() * words.length | 0
+            word = words[index]
+        }
+        this.answerWord = word
     }
 
     Wordle.prototype.guess = function(word) {
@@ -41,15 +44,15 @@
 
         word = word.toLowerCase()
 
-        let result = []
+        let result = ""
         for(let i = 0; i < this.wordLength; i++) {
             let char = word[i]
             if(char == this.answerWord[i]) {
-                result.push("Right")
-            } else if(this.answerWord.includes(char)) {
-                result.push("Contain")
+                result += "R"
+            } else if(this.answerWordSet.has(char)) {
+                result += "C"
             } else {
-                result.push("Wrong")
+                result += "W"
             }
         }
 
@@ -70,24 +73,27 @@
     }
 
     Wordle.prototype._guess = function(word) {
-        let result = []
+        let result = ""
+        const answerWord = this.answerWord
         for(let i = 0; i < this.wordLength; i++) {
-            let char = word[i]
-            if(char == this.answerWord[i]) {
-                result.push("Right")
-            } else if(this.answerWord.includes(char)) {
-                result.push("Contain")
+            const char = word[i]
+            if(char == answerWord[i]) {
+                result += "R"
+            } else if(answerWord.includes(char)) {
+                result += "C"
             } else {
-                result.push("Wrong")
+                result += "W"
             }
         }
         this.rawHistory.push([word, result])
+        return result
     }
 
     Wordle.prototype.makeReply = function(word, result) {
         let str = ""
+        let mapping = {"R" : "Right", "C" : "Contain", "W" : "Wrong"}
         for(let i = 0; i < this.wordLength; i++) {
-            str += "[" + word[i] + ":" + this.emoji[result[i]] + "] "
+            str += "[" + word[i] + ":" + this.emoji[mapping[result[i]]] + "] "
         }
         return str
     }
