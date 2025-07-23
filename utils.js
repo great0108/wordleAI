@@ -10,7 +10,10 @@
         } else {
             words = FileStream.read("./" + path)
         }
-        let result = words.split("\n")
+        let result = words.split("\r\n")
+        if(result.length == 1) {
+            result = result[0].split("\n")
+        }
         return result
     }
 

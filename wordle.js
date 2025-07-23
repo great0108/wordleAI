@@ -69,6 +69,21 @@
         return [result, info]
     }
 
+    Wordle.prototype._guess = function(word) {
+        let result = []
+        for(let i = 0; i < this.wordLength; i++) {
+            let char = word[i]
+            if(char == this.answerWord[i]) {
+                result.push("Right")
+            } else if(this.answerWord.includes(char)) {
+                result.push("Contain")
+            } else {
+                result.push("Wrong")
+            }
+        }
+        this.rawHistory.push([word, result])
+    }
+
     Wordle.prototype.makeReply = function(word, result) {
         let str = ""
         for(let i = 0; i < this.wordLength; i++) {
@@ -83,6 +98,15 @@
 
     Wordle.prototype.getLeftTry = function() {
         return this.maxCount - this.count
+    }
+
+    Wordle.prototype.revert = function() {
+        if(this.count == 0) {
+            return
+        }
+        this.count -= 1
+        this.history.pop()
+        this.rawHistory.pop()
     }
 
     module.exports = Wordle
