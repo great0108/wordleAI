@@ -45,11 +45,12 @@
         word = word.toLowerCase()
 
         let result = ""
+        const answerWord = this.answerWord
         for(let i = 0; i < this.wordLength; i++) {
-            let char = word[i]
-            if(char == this.answerWord[i]) {
+            const char = word[i]
+            if(char == answerWord[i]) {
                 result += "R"
-            } else if(this.answerWordSet.has(char)) {
+            } else if(answerWord.includes(char)) {
                 result += "C"
             } else {
                 result += "W"

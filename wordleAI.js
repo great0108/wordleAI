@@ -36,11 +36,11 @@
         } else if(candidate.length == 2) {
             return [1.5, candidate[0]]
         } else if(step >= 1 && candidate.length > 200) {
-            return [Math.log10(candidate.length) + 0.9, candidate[0]] // approximate
+            return [Math.log10(candidate.length)*0.9 + 1.2, candidate[0]] // approximate
         } else if(step >= 2 && candidate.length > 30) {
-            return [Math.log10(candidate.length) + 1, candidate[0]] // approximate
+            return [Math.log10(candidate.length)*0.9 + 1.2, candidate[0]] // approximate
         } else if(step >= 3 && candidate.length > 10) {
-            return [Math.log10(candidate.length) + 1.1, candidate[0]] // approximate
+            return [Math.log10(candidate.length)*0.9 + 1.2, candidate[0]] // approximate
         }
 
         let minGuess = 100
