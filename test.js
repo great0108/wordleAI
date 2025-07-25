@@ -1,7 +1,7 @@
 "use strict"
 const Wordle = require("./wordle")
 const WordleDict = require("./wordleDict")
-const WordleAI = require("./wordleAI")
+const WordleAI = require("./wordleAI2")
 const readline = require('readline');
 
 let wordle = new Wordle(6)

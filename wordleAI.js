@@ -3,8 +3,8 @@
     const Wordle = require("./wordle")
     const WordleDict = require("./wordleDict")
     const utils = require("./utils")
-    let first = {}
 
+    // 3.528
     function WordleAI() {
         this.game = new Wordle(6)
         this.dict = new WordleDict()
@@ -35,7 +35,7 @@
             return [1, candidate[0]]
         } else if(candidate.length == 2) {
             return [1.5, candidate[0]]
-        } else if(step >= 1 && candidate.length > 200) {
+        } else if(step >= 1 && candidate.length > 100) {
             return [Math.log10(candidate.length)*0.9 + 1.2, candidate[0]] // approximate
         } else if(step >= 2 && candidate.length > 30) {
             return [Math.log10(candidate.length)*0.9 + 1.2, candidate[0]] // approximate
