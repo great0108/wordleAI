@@ -4,11 +4,12 @@
     const WordleDict = require("./wordleDict")
     const utils = require("./utils")
 
-    // 3.528
+    // 3.455
     function WordleAI() {
         this.game = new Wordle(6)
         this.dict = new WordleDict()
-        this.words = this.dict.extended_words
+        this.words = this.dict.words
+        this.ext_words = this.dict.extended_words
         this.epsilon = 1e-8
         this.firstChoose = utils.read_json("firstChoose.json")
     }
@@ -33,69 +34,109 @@
     WordleAI.prototype.avgGuessToWin = function(candidate, history, step) {
         if(candidate.length == 1) {
             return [1, candidate[0]]
-        } else if(candidate.length == 2) {
+        }
+        else if(candidate.length == 2) {
             return [1.5, candidate[0]]
-        } else if(step >= 1 && candidate.length > 100) {
-            return [Math.log10(candidate.length)*0.9 + 1.2, candidate[0]] // approximate
-        } else if(step >= 2 && candidate.length > 30) {
-            return [Math.log10(candidate.length)*0.9 + 1.2, candidate[0]] // approximate
-        } else if(step >= 3 && candidate.length > 10) {
-            return [Math.log10(candidate.length)*0.9 + 1.2, candidate[0]] // approximate
         }
 
         let minGuess = 100
         let minGuessWord = null
-        let minimum = 1 + (candidate.length-1) / candidate.length + this.epsilon
         let wordle = new Wordle(6)
         wordle.rawHistory = history
+        let results = []
 
-        for(let word of candidate) {
-            let partition = {}
-            let histories = {}
-            let result = 0
+        let wordList = candidate
+        if(step == 0) {
+            wordList = this.dict.words
+        } else if(candidate.length > 20) {
+            wordList = this.dict.words
+        }
 
-            for(let w of candidate) {
-                if(w == word) {
-                    result += 1
-                    continue
+        for(let word of wordList) {
+            let [partition, _] = this.getPartition(word, candidate, wordle)
+            let result = this.simpleScore(partition) / candidate.length + 1
+
+            if(step == 0 || candidate.length < 20) {
+                results.push([word, result])
+            } else {
+                if(minGuess > result) {
+                    minGuess = result
+                    minGuessWord = word
                 }
+            }
+        }
 
-                wordle.answerWord = w
-                let h = wordle._guess(word)
-                
-                if(h in partition) {
-                    partition[h].push(w)
-                } else {
-                    partition[h] = [w]
-                    histories[h] = wordle.rawHistory.slice()
+        if(minGuess <= 2) {
+            return [minGuess, minGuessWord]
+        }
+
+        if(step == 0 || candidate.length < 20) {
+            results.sort((a, b) => a[1] - b[1])
+            results = results.slice(0, Math.min(10, results.length / 2 | 0))
+            for(let result of results) {
+                let [word, pred] = result
+                let [partition, histories] = this.getPartition(word, candidate, wordle)
+                let score = 0
+
+                for(let key in partition) {
+                    let a = this.avgGuessToWin(partition[key], histories[key], step+1)
+                    score += a[0] * partition[key].length
                 }
-                wordle.rawHistory.pop()
-            }
-
-            for(let key in partition) {
-                let a = this.avgGuessToWin(partition[key], histories[key], step+1)
-                result += (a[0]+1) * partition[key].length
-            }
-            result /= candidate.length
-
-            // if(step == 0) {
-            //     console.log(word, result)
-            // }
-
-            if(minGuess > result) {
-                minGuess = result
-                minGuessWord = word
-            }
-            if(minimum > result) {
-                break
+                score = score / candidate.length + 1
+                // if(step == 0) {
+                //     first[word] = score
+                //     console.log(word, score)
+                // }
+                if(minGuess > score) {
+                    minGuess = score
+                    minGuessWord = word
+                }
             }
         }
 
         return [minGuess, minGuessWord]
     }
 
+    WordleAI.prototype.simpleScore = function(partition) {
+        let result = 0
+        for(let key in partition) {
+            let part = partition[key]
+            if(part.length == 1) {
+                result += 1
+            } else {
+                result += (Math.log10(part.length)*1 + 1.19) * part.length
+            }
+        }
+        return result
+    }
+
+    WordleAI.prototype.getPartition = function(word, candidate, wordle) {
+        let partition = {}
+        let histories = {}
+
+        for(let w of candidate) {
+            if(w == word) {
+                continue
+            }
+            wordle.answerWord = w
+            let h = wordle._guess(word)
+            
+            if(h in partition) {
+                partition[h].push(w)
+            } else {
+                partition[h] = [w]
+                histories[h] = wordle.rawHistory.slice()
+            }
+            wordle.rawHistory.pop()
+        }
+        return [partition, histories]
+    }
+
+    // let first = {}
     // let wordleAI = new WordleAI()
     // wordleAI.inference([])
+    // const fs = require("fs")
+    // fs.writeFileSync("firstChoose2.json", JSON.stringify(first))
 
     module.exports = WordleAI
 })()

@@ -1,6 +1,6 @@
 "use strict"
 const Wordle = require("./wordle")
-const WordleAI = require("./wordleAI2")
+const WordleAI = require("./wordleAI")
 const utils = require("./utils")
 
 let words = utils.read_words("words.txt")

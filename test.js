@@ -1,7 +1,7 @@
 "use strict"
 const Wordle = require("./wordle")
 const WordleDict = require("./wordleDict")
-const WordleAI = require("./wordleAI2")
+const WordleAI = require("./wordleAI")
 const readline = require('readline');
 
 let wordle = new Wordle(6)
@@ -75,34 +75,14 @@ async function main() {
 }
 
 main()
-// let word = "abbot"
-// let exclude = ["q", "W", "r", "t", "y"]
-// let regex = /^[^qwrty]+$/
-// let start = Date.now()
-// let result = []
-// let history = [ [ 'aback', [ 'Right', 'Right', 'Contain', 'Wrong', 'Wrong' ] ] ]
-// let candidate = [
-//     'abbey', 'abbot',
-//     'abhor', 'abide',
-//     'abled', 'abode',
-//     'abort', 'about',
-//     'above', 'abuse',
-//     'abyss'
-//   ]
-// let first = {"a" : 1}
-// wordleDict.words = candidate
-// wordle.setAnswer("abbey")
-// wordle.rawHistory = history
-// let wordList = []
-// for(let i = 0; i < 1000000; i++) {
-//     // let match = true
-//     // for(let char of exclude) {
-//     //     if(words.includes(char)) {
-//     //         match = false
-//     //         break
-//     //     }
-//     // }
-//     let a = wordle._guess(word)
-// }
-// let end = Date.now()
-// console.log(end - start)
+
+wordle = new Wordle(6)
+wordle.setAnswer("about")
+let word = "aback"
+let start = Date.now()
+for(let i = 0; i < 1000000; i++) {
+    let a = wordle._guess(word)
+    wordle.rawHistory.pop()
+}
+let end = Date.now()
+console.log(end - start)
