@@ -8,7 +8,7 @@
             const fs = require("fs")
             words = fs.readFileSync(path, "utf-8")
         } else {
-            words = FileStream.read("./" + path)
+            words = FileStream.read(setting.module_path + "/" + path)
         }
         let result = words.split("\r\n")
         if(result.length == 1) {
