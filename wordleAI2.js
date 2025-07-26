@@ -4,7 +4,7 @@
     const WordleDict = require("./wordleDict")
     const utils = require("./utils")
 
-    // 3.486
+    // 3.455
     function WordleAI() {
         this.game = new Wordle(6)
         this.dict = new WordleDict()
@@ -47,16 +47,16 @@
 
         let wordList = candidate
         if(step == 0) {
-            wordList = this.words
-        } else if(candidate.length > 10) {
-            wordList = this.words
+            wordList = this.dict.words
+        } else if(candidate.length > 20) {
+            wordList = this.dict.words
         }
 
         for(let word of wordList) {
             let [partition, _] = this.getPartition(word, candidate, wordle)
-            let result = this.simpleScore(partition) + 1
+            let result = this.simpleScore(partition) / candidate.length + 1
 
-            if(step == 0) {
+            if(step == 0 || candidate.length < 20) {
                 results.push([word, result])
             } else {
                 if(minGuess > result) {
@@ -76,15 +76,13 @@
             for(let result of results) {
                 let [word, pred] = result
                 let [partition, histories] = this.getPartition(word, candidate, wordle)
-                let score = candidate.includes(word) ? 1 : 0
-                let count = candidate.includes(word) ? 1 : 0
+                let score = 0
 
                 for(let key in partition) {
                     let a = this.avgGuessToWin(partition[key], histories[key], step+1)
-                    score += (a[0]+1) * partition[key].length
-                    count += partition[key].length
+                    score += a[0] * partition[key].length
                 }
-                score /= count
+                score = score / candidate.length + 1
                 // if(step == 0) {
                 //     first[word] = score
                 //     console.log(word, score)
@@ -101,13 +99,15 @@
 
     WordleAI.prototype.simpleScore = function(partition) {
         let result = 0
-        let count = 0
         for(let key in partition) {
             let part = partition[key]
-            result += (Math.log10(part.length)*1.2 + 1) * part.length
-            count += part.length
+            if(part.length == 1) {
+                result += 1
+            } else {
+                result += (Math.log10(part.length)*1 + 1.19) * part.length
+            }
         }
-        return result / count
+        return result
     }
 
     WordleAI.prototype.getPartition = function(word, candidate, wordle) {
