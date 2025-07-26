@@ -74,15 +74,15 @@ async function main() {
     rl.close();
 }
 
-// main()
+main()
 
-wordle = new Wordle(6)
-wordle.setAnswer("about")
-let word = "aback"
-let start = Date.now()
-for(let i = 0; i < 10000000; i++) {
-    let a = wordle._guess(word)
-    wordle.rawHistory.pop()
-}
-let end = Date.now()
-console.log(end - start)
+// wordle = new Wordle(6)
+// wordle.setAnswer("about")
+// let word = "aback"
+// let start = Date.now()
+// for(let i = 0; i < 10000000; i++) {
+//     let a = wordle._guess(word)
+//     wordle.rawHistory.pop()
+// }
+// let end = Date.now()
+// console.log(end - start)

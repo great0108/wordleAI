@@ -45,9 +45,9 @@
         word = word.toLowerCase()
 
         let result = ""
-        const answerWord = this.answerWord
+        let answerWord = this.answerWord
         for(let i = 0; i < this.wordLength; i++) {
-            const char = word[i]
+            let char = word[i]
             if(char == answerWord[i]) {
                 result += "R"
             } else if(answerWord.includes(char)) {
@@ -75,9 +75,9 @@
 
     Wordle.prototype._guess = function(word) {
         let result = ""
-        const answerWord = this.answerWord
+        let answerWord = this.answerWord
         for(let i = 0; i < this.wordLength; i++) {
-            const char = word[i]
+            let char = word[i]
             if(char == answerWord[i]) {
                 result += "R"
             } else if(answerWord.includes(char)) {
