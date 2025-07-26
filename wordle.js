@@ -65,7 +65,8 @@
     Wordle.prototype.onlyGuess = function(word) {
         let result = ""
         let answerWord = this.answerWord
-        for(let i = 0; i < this.wordLength; i++) {
+        let len = this.wordLength
+        for(let i = 0; i < len; i++) {
             let char = word[i]
             if(char == answerWord[i]) {
                 result += "R"

@@ -86,7 +86,7 @@
                 score = score / candidate.length + 1
                 // if(step == 0) {
                 //     first[word] = score
-                //     console.log(word, score)
+                //     console.log(word, score, pred)
                 // }
                 if(minGuess > score) {
                     minGuess = score
