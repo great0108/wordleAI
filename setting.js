@@ -2,7 +2,7 @@
     const setting = {
         "nodeJS" : true,
         "version" : 1.0,
-        "module_path" : "/storage/emulated/0/global_modules"
+        "module_path" : "/storage/emulated/0/msgbot/global_modules/wordleAI"
     }
 
     module.exports = setting

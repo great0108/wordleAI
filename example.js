@@ -16,7 +16,7 @@ function onMessage(msg) {
 
     if(game) {
         if(msg.content.startsWith("/")) {
-            let word = answer.slice(1)
+            let word = msg.content.slice(1)
             try {
                 let [result, info] = wordle.guess(word)
                 if(info == null) {
@@ -30,6 +30,12 @@ function onMessage(msg) {
                     game = false
                 }
                 msg.reply(result)
+
+                if(info == null) {
+                    let [remain, word] = wordleAI.inference(wordle.rawHistory)
+                    msg.reply("AI 추천 단어 : " + word + "  예측한 남은 추측 수 : " + remain)
+                    msg.reply('단어 입력 : /-----, 히스토리 보기 : h, 남은 단어 보기 : l')
+                }
             } catch(e) {
                 msg.reply(e.message)
             }
