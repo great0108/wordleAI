@@ -44,18 +44,7 @@
 
         word = word.toLowerCase()
 
-        let result = ""
-        let answerWord = this.answerWord
-        for(let i = 0; i < this.wordLength; i++) {
-            let char = word[i]
-            if(char == answerWord[i]) {
-                result += "R"
-            } else if(answerWord.includes(char)) {
-                result += "C"
-            } else {
-                result += "W"
-            }
-        }
+        let result = this.onlyGuess(word)
 
         this.rawHistory.push([word, result])
 
@@ -73,7 +62,7 @@
         return [result, info]
     }
 
-    Wordle.prototype._guess = function(word) {
+    Wordle.prototype.onlyGuess = function(word) {
         let result = ""
         let answerWord = this.answerWord
         for(let i = 0; i < this.wordLength; i++) {
@@ -86,7 +75,6 @@
                 result += "W"
             }
         }
-        this.rawHistory.push([word, result])
         return result
     }
 

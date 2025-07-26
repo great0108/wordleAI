@@ -6,7 +6,7 @@
 
     // 3.455
     function WordleAI() {
-        this.game = new Wordle(6)
+        this.wordle = new Wordle(6)
         this.dict = new WordleDict()
         this.words = this.dict.words
         this.ext_words = this.dict.extended_words
@@ -28,7 +28,7 @@
         }
         let cond = this.dict.historyToCond(history)
         let candidate = this.dict.search(cond)
-        return this.avgGuessToWin(candidate, history, 0)
+        return this.avgGuessToWin(candidate, history.slice(), 0)
     }
 
     WordleAI.prototype.avgGuessToWin = function(candidate, history, step) {
@@ -41,22 +41,23 @@
 
         let minGuess = 100
         let minGuessWord = null
-        let wordle = new Wordle(6)
-        wordle.rawHistory = history
+        // let wordle = new Wordle(6)
+        // wordle.rawHistory = history
+        history.push([])
         let results = []
 
         let wordList = candidate
         if(step == 0) {
             wordList = this.dict.words
-        } else if(candidate.length > 20) {
+        } else if(candidate.length > 40) {
             wordList = this.dict.words
         }
 
         for(let word of wordList) {
-            let [partition, _] = this.getPartition(word, candidate, wordle)
+            let [partition, _] = this.getPartition(word, candidate, history)
             let result = this.simpleScore(partition) / candidate.length + 1
 
-            if(step == 0 || candidate.length < 20) {
+            if(step == 1 || candidate.length < 20) {
                 results.push([word, result])
             } else {
                 if(minGuess > result) {
@@ -70,12 +71,12 @@
             return [minGuess, minGuessWord]
         }
 
-        if(step == 0 || candidate.length < 20) {
+        if(step == 1 || candidate.length < 20) {
             results.sort((a, b) => a[1] - b[1])
             results = results.slice(0, Math.min(10, results.length / 2 | 0))
             for(let result of results) {
                 let [word, pred] = result
-                let [partition, histories] = this.getPartition(word, candidate, wordle)
+                let [partition, histories] = this.getPartition(word, candidate, history)
                 let score = 0
 
                 for(let key in partition) {
@@ -110,24 +111,28 @@
         return result
     }
 
-    WordleAI.prototype.getPartition = function(word, candidate, wordle) {
+    WordleAI.prototype.getPartition = function(word, candidate, history) {
         let partition = {}
         let histories = {}
+        let lastHistIdx = history.length - 1
+        let wordle = this.wordle
 
         for(let w of candidate) {
             if(w == word) {
                 continue
             }
             wordle.answerWord = w
-            let h = wordle._guess(word)
+            let result = wordle.onlyGuess(word)
             
-            if(h in partition) {
-                partition[h].push(w)
+            if(result in partition) {
+                partition[result].push(w)
             } else {
-                partition[h] = [w]
-                histories[h] = wordle.rawHistory.slice()
+                partition[result] = [w]
+
+                let hist = history.slice()
+                hist[lastHistIdx] = [word, result]
+                histories[result] = hist
             }
-            wordle.rawHistory.pop()
         }
         return [partition, histories]
     }
