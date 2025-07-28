@@ -14,35 +14,60 @@
         this.firstChoose = utils.read_json("firstChoose.json")
     }
 
-    WordleAI.prototype.inference = function(history) {
+    WordleAI.prototype.inference = function(history, order) {
         if(history.length == 0) {
             let minGuess = 100
             let minGuessWord = null
+            let words = []
             for(let word in this.firstChoose) {
+                words.push([word, this.firstChoose[word]])
                 if(minGuess > this.firstChoose[word]) {
                     minGuess = this.firstChoose[word]
                     minGuessWord = word
                 }
             }
-            return [minGuess, minGuessWord]
+            if(order) {
+                words.sort((a, b) => a[1] - b[1])
+                return words
+            }
+            return [minGuessWord, minGuess]
         }
         let cond = this.dict.historyToCond(history)
         let candidate = this.dict.search(cond)
-        return this.avgGuessToWin(candidate, history.slice(), 0)
+        return this.avgGuessToWin(candidate, history.slice(), 0, order)
     }
 
-    WordleAI.prototype.avgGuessToWin = function(candidate, history, step) {
+    WordleAI.prototype.guessWord = function(history, word) {
+        let cond = this.dict.historyToCond(history)
+        let candidate = this.dict.search(cond)
+
+        let [partition, histories] = this.getPartition(word, candidate, history.slice())
+        let score = 0
+
+        for(let key in partition) {
+            let a = this.avgGuessToWin(partition[key], histories[key], 1)
+            score += a[1] * partition[key].length
+        }
+        score = score / candidate.length + 1
+        return score
+    }
+
+    WordleAI.prototype.avgGuessToWin = function(candidate, history, step, order) {
         if(candidate.length == 1) {
-            return [1, candidate[0]]
+            if(order) {
+                return [[candidate[0], 1]]
+            }
+            return [candidate[0], 1]
         }
         else if(candidate.length == 2) {
-            return [1.5, candidate[0]]
+            if(order) {
+                return [[candidate[0], 1.5], [candidate[1], 1.5]]
+            }
+            return [candidate[0], 1.5]
         }
 
         let minGuess = 100
         let minGuessWord = null
-        // let wordle = new Wordle(6)
-        // wordle.rawHistory = history
         history.push([])
         let results = []
 
@@ -57,7 +82,7 @@
             let [partition, _] = this.getPartition(word, candidate, history)
             let result = this.simpleScore(partition) / candidate.length + 1
 
-            if(step == 1 || candidate.length < 20) {
+            if(step == 0 || candidate.length < 20) {
                 results.push([word, result])
             } else {
                 if(minGuess > result) {
@@ -67,13 +92,15 @@
             }
         }
 
-        if(minGuess <= 2) {
-            return [minGuess, minGuessWord]
+        if(minGuess <= 2 && !order) {
+            return [minGuessWord, minGuess]
         }
 
-        if(step == 1 || candidate.length < 20) {
+        let words = []
+        if(step == 0 || candidate.length < 20) {
             results.sort((a, b) => a[1] - b[1])
             results = results.slice(0, Math.min(10, results.length / 2 | 0))
+
             for(let result of results) {
                 let [word, pred] = result
                 let [partition, histories] = this.getPartition(word, candidate, history)
@@ -81,9 +108,10 @@
 
                 for(let key in partition) {
                     let a = this.avgGuessToWin(partition[key], histories[key], step+1)
-                    score += a[0] * partition[key].length
+                    score += a[1] * partition[key].length
                 }
                 score = score / candidate.length + 1
+                words.push([word, score])
                 // if(step == 0) {
                 //     first[word] = score
                 //     console.log(word, score, pred)
@@ -95,7 +123,11 @@
             }
         }
 
-        return [minGuess, minGuessWord]
+        if(order) {
+            words.sort((a, b) => a[1] - b[1])
+            return words
+        }
+        return [minGuessWord, minGuess]
     }
 
     WordleAI.prototype.simpleScore = function(partition) {
@@ -141,7 +173,7 @@
     // let wordleAI = new WordleAI()
     // wordleAI.inference([])
     // const fs = require("fs")
-    // fs.writeFileSync("firstChoose2.json", JSON.stringify(first))
+    // fs.writeFileSync("firstChoose.json", JSON.stringify(first))
 
     module.exports = WordleAI
 })()

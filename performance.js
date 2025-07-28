@@ -12,7 +12,7 @@ for(let answord of words) {
     wordle.setAnswer(answord)
 
     while(true) {
-        let [remain, word] = wordleAI.inference(wordle.rawHistory)
+        let [word, remain] = wordleAI.inference(wordle.rawHistory)
         let [_, info] = wordle.guess(word)
         if(info == "win") {
             break

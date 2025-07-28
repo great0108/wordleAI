@@ -36,8 +36,10 @@ async function main() {
         }
 
         if(game) {
-            let [remain, word] = wordleAI.inference(wordle.rawHistory)
-            console.log("AI 추천 단어 : " + word + "  예측한 남은 추측 수 : " + remain)
+            // let [word, remain] = wordleAI.inference(wordle.rawHistory)
+            // console.log("AI 추천 단어 : " + word + "  예측한 남은 추측 수 : " + remain)
+            console.log(wordleAI.inference(wordle.rawHistory, true))
+            console.log(wordleAI.guessWord(wordle.rawHistory, "about"))
             let answer = await input('단어 입력 : /-----, 히스토리 보기 : h ')
             if(answer.startsWith("/")) {
                 let word = answer.slice(1)
@@ -74,13 +76,12 @@ async function main() {
     rl.close();
 }
 
-// main()
-
-let history = [["slate", "WWWWW"]]
-let start = Date.now()
-for(let i = 0; i < 10; i++) {
-    // let a = wordle.onlyGuess(word)
-    wordleAI.inference(history)
-}
-let end = Date.now()
-console.log(end - start)
+main()
+// let history = [["slate", "WWWWW"]]
+// let start = Date.now()
+// for(let i = 0; i < 10; i++) {
+//     // let a = wordle.onlyGuess(word)
+//     wordleAI.inference(history)
+// }
+// let end = Date.now()
+// console.log(end - start)

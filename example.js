@@ -9,7 +9,7 @@ function onMessage(msg) {
     if(msg.content == "워들") {
         wordle.reset()
         game = true
-        let [remain, word] = wordleAI.inference(wordle.rawHistory)
+        let [word, remain] = wordleAI.inference(wordle.rawHistory)
         msg.reply("AI 추천 단어 : " + word + "  예측한 남은 추측 수 : " + remain)
         msg.reply('단어 입력 : /-----, 히스토리 보기 : h, 남은 단어 보기 : l')
     }
@@ -32,7 +32,7 @@ function onMessage(msg) {
                 msg.reply(result)
 
                 if(info == null) {
-                    let [remain, word] = wordleAI.inference(wordle.rawHistory)
+                    let [word, remain] = wordleAI.inference(wordle.rawHistory)
                     msg.reply("AI 추천 단어 : " + word + "  예측한 남은 추측 수 : " + remain)
                     msg.reply('단어 입력 : /-----, 히스토리 보기 : h, 남은 단어 보기 : l')
                 }
