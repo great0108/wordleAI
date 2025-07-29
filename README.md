@@ -1,5 +1,6 @@
 # WordleAI
-lightweight wordle-solver with tree search.
+A lightweight wordle-solver with tree search.
+
 It takes an average of ~3.45 guesses per win, only takes 1-2 minutes to run for all 2315 Wordle words.
 
 ## Get started
